@@ -6,7 +6,7 @@ const util = {};
 var resizeWidth = 10;
 var resizeHeight = 6;
 
-util.Eye = function(patch, imagex, imagey, width, height) {
+util.Eye = function (patch, imagex, imagey, width, height) {
     this.patch = patch;
     this.imagex = imagex;
     this.imagey = imagey;
@@ -14,7 +14,7 @@ util.Eye = function(patch, imagex, imagey, width, height) {
     this.height = height;
 };
 
-util.getEyeFeats = function(eyes) {
+util.getEyeFeats = function (eyes) {
     let process = (eye) => {
         let resized = this.resizeEye(eye, resizeWidth, resizeHeight);
         let gray = this.grayscale(resized.data, resized.width, resized.height);
@@ -23,10 +23,10 @@ util.getEyeFeats = function(eyes) {
         return hist;
     };
 
-    if (webgazer.params.trackEye == 'left') {
+    if (eyels.params.trackEye == 'left') {
         return process(eyes.left);
     }
-    else if (webgazer.params.trackEye == 'right') {
+    else if (eyels.params.trackEye == 'right') {
         return process(eyes.right);
     }
     else {
@@ -34,18 +34,18 @@ util.getEyeFeats = function(eyes) {
     }
 }
 
-util.DataWindow = function(windowSize, data) {
+util.DataWindow = function (windowSize, data) {
     this.data = [];
     this.windowSize = windowSize;
     this.index = 0;
     this.length = 0;
-    if(data){
-        this.data = data.slice(data.length-windowSize,data.length);
+    if (data) {
+        this.data = data.slice(data.length - windowSize, data.length);
         this.length = this.data.length;
     }
 };
 
-util.DataWindow.prototype.push = function(entry) {
+util.DataWindow.prototype.push = function (entry) {
     if (this.data.length < this.windowSize) {
         this.data.push(entry);
         this.length = this.data.length;
@@ -57,11 +57,11 @@ util.DataWindow.prototype.push = function(entry) {
     return this;
 };
 
-util.DataWindow.prototype.get = function(ind) {
+util.DataWindow.prototype.get = function (ind) {
     return this.data[this.getTrueIndex(ind)];
 };
 
-util.DataWindow.prototype.getTrueIndex = function(ind) {
+util.DataWindow.prototype.getTrueIndex = function (ind) {
     if (this.data.length < this.windowSize) {
         return ind;
     } else {
@@ -70,13 +70,13 @@ util.DataWindow.prototype.getTrueIndex = function(ind) {
     }
 };
 
-util.DataWindow.prototype.addAll = function(data) {
+util.DataWindow.prototype.addAll = function (data) {
     for (var i = 0; i < data.length; i++) {
         this.push(data[i]);
     }
 };
 
-util.grayscale = function(pixels, width, height){
+util.grayscale = function (pixels, width, height) {
     var gray = new Uint8ClampedArray(pixels.length >> 2);
     var p = 0;
     var w = 0;
@@ -91,7 +91,7 @@ util.grayscale = function(pixels, width, height){
     return gray;
 };
 
-util.equalizeHistogram = function(src, step, dst) {
+util.equalizeHistogram = function (src, step, dst) {
     var srcLength = src.length;
     if (!dst) dst = src;
     if (!step) step = 5;
@@ -107,7 +107,7 @@ util.equalizeHistogram = function(src, step, dst) {
     for (var i = 0; i < 256; ++i) {
         var h = hist[i];
         prev = h += prev;
-        hist[i] = h * norm; 
+        hist[i] = h * norm;
     }
 
     for (var i = 0; i < srcLength; ++i) {
@@ -116,14 +116,14 @@ util.equalizeHistogram = function(src, step, dst) {
     return dst;
 };
 
-util.threshold = function(data, threshold) {
+util.threshold = function (data, threshold) {
     for (let i = 0; i < data.length; i++) {
         data[i] = (data[i] > threshold) ? 255 : 0;
     }
     return data;
 };
 
-util.correlation = function(data1, data2) {
+util.correlation = function (data1, data2) {
     const length = Math.min(data1.length, data2.length);
     let count = 0;
     for (let i = 0; i < length; i++) {
@@ -134,13 +134,13 @@ util.correlation = function(data1, data2) {
     return count / Math.max(data1.length, data2.length);
 };
 
-util.resizeEye = function(eye, resizeWidth, resizeHeight) {
+util.resizeEye = function (eye, resizeWidth, resizeHeight) {
 
     var canvas = document.createElement('canvas');
     canvas.width = eye.width;
     canvas.height = eye.height;
 
-    canvas.getContext('2d').putImageData(eye.patch,0,0);
+    canvas.getContext('2d').putImageData(eye.patch, 0, 0);
 
     var tempCanvas = document.createElement('canvas');
 
@@ -152,19 +152,18 @@ util.resizeEye = function(eye, resizeWidth, resizeHeight) {
     return tempCanvas.getContext('2d').getImageData(0, 0, resizeWidth, resizeHeight);
 };
 
-util.bound = function(prediction){
-    if(prediction.x < 0)
+util.bound = function (prediction) {
+    if (prediction.x < 0)
         prediction.x = 0;
-    if(prediction.y < 0)
+    if (prediction.y < 0)
         prediction.y = 0;
     var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-    if(prediction.x > w){
+    if (prediction.x > w) {
         prediction.x = w;
     }
 
-    if(prediction.y > h)
-    {
+    if (prediction.y > h) {
         prediction.y = h;
     }
     return prediction;
@@ -178,7 +177,7 @@ function debugBoxWrite(para, stats) {
     para.innerText = str;
 }
 
-util.DebugBox = function(interval) {
+util.DebugBox = function (interval) {
     this.para = document.createElement('p');
     this.div = document.createElement('div');
     this.div.appendChild(this.para);
@@ -188,25 +187,25 @@ util.DebugBox = function(interval) {
     this.canvas = {};
     this.stats = {};
     var updateInterval = interval || 300;
-    (function(localThis) {
-        setInterval(function() {
+    (function (localThis) {
+        setInterval(function () {
             debugBoxWrite(localThis.para, localThis.stats);
         }, updateInterval);
     }(this));
 };
 
-util.DebugBox.prototype.set = function(key, value) {
+util.DebugBox.prototype.set = function (key, value) {
     this.stats[key] = value;
 };
 
-util.DebugBox.prototype.inc = function(key, incBy, init) {
+util.DebugBox.prototype.inc = function (key, incBy, init) {
     if (!this.stats[key]) {
         this.stats[key] = init || 0;
     }
     this.stats[key] += incBy || 1;
 };
 
-util.DebugBox.prototype.addButton = function(name, func) {
+util.DebugBox.prototype.addButton = function (name, func) {
     if (!this.buttons[name]) {
         this.buttons[name] = document.createElement('button');
         this.div.appendChild(this.buttons[name]);
@@ -217,13 +216,13 @@ util.DebugBox.prototype.addButton = function(name, func) {
     button.innerText = name;
 };
 
-util.DebugBox.prototype.show = function(name, func) {
+util.DebugBox.prototype.show = function (name, func) {
     if (!this.canvas[name]) {
         this.canvas[name] = document.createElement('canvas');
         this.div.appendChild(this.canvas[name]);
     }
     var canvas = this.canvas[name];
-    canvas.getContext('2d').clearRect(0,0, canvas.width, canvas.height);
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
     func(canvas);
 };
 

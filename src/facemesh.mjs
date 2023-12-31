@@ -1,6 +1,6 @@
 import * as faceLandmarksDetection from '@tensorflow-models/face-landmarks-detection';
 
-const TFFaceMesh = function() {
+const TFFaceMesh = function () {
 
   this.model = faceLandmarksDetection.load(
     faceLandmarksDetection.SupportedPackages.mediapipeFacemesh,
@@ -11,7 +11,7 @@ const TFFaceMesh = function() {
 
 TFFaceMesh.prototype.positionsArray = null;
 
-TFFaceMesh.prototype.getEyePatches = async function(video, imageCanvas, width, height) {
+TFFaceMesh.prototype.getEyePatches = async function (video, imageCanvas, width, height) {
 
   if (imageCanvas.width === 0) {
     return null;
@@ -26,7 +26,7 @@ TFFaceMesh.prototype.getEyePatches = async function(video, imageCanvas, width, h
     predictIrises: false,
   });
 
-  if (predictions.length == 0){
+  if (predictions.length == 0) {
     return false;
   }
 
@@ -72,12 +72,12 @@ TFFaceMesh.prototype.getEyePatches = async function(video, imageCanvas, width, h
   var rightWidth = rightBBox.width;
   var rightHeight = rightBBox.height;
 
-  if (leftWidth === 0 || rightWidth === 0){
+  if (leftWidth === 0 || rightWidth === 0) {
     console.log('an eye patch had zero width');
     return null;
   }
 
-  if (leftHeight === 0 || rightHeight === 0){
+  if (leftHeight === 0 || rightHeight === 0) {
     console.log('an eye patch had zero height');
     return null;
   }
@@ -111,11 +111,11 @@ TFFaceMesh.prototype.getPositions = function () {
   return this.positionsArray;
 }
 
-TFFaceMesh.prototype.reset = function(){
-  console.log( "Unimplemented; Tracking.js has no obvious reset function" );
+TFFaceMesh.prototype.reset = function () {
+  console.log("Unimplemented; Tracking.js has no obvious reset function");
 }
 
-TFFaceMesh.prototype.drawFaceOverlay = function(ctx, keypoints){
+TFFaceMesh.prototype.drawFaceOverlay = function (ctx, keypoints) {
 
   if (keypoints) {
     ctx.fillStyle = '#32EEDB';
@@ -127,7 +127,7 @@ TFFaceMesh.prototype.drawFaceOverlay = function(ctx, keypoints){
       const y = keypoints[i][1];
 
       ctx.beginPath();
-      ctx.arc(x, y, 1 , 0, 2 * Math.PI);
+      ctx.arc(x, y, 1, 0, 2 * Math.PI);
       ctx.closePath();
       ctx.fill();
     }

@@ -10,14 +10,14 @@ import ridgeRegWeighted from './ridgeWeightedReg.mjs';
 import ridgeRegThreaded from './ridgeRegThreaded.mjs';
 import util from './util.mjs';
 
-const webgazer = {};
-webgazer.tracker = {};
-webgazer.tracker.TFFaceMesh = TFFaceMesh;
-webgazer.reg = Reg;
-webgazer.reg.RidgeWeightedReg = ridgeRegWeighted.RidgeWeightedReg;
-webgazer.reg.RidgeRegThreaded = ridgeRegThreaded.RidgeRegThreaded;
-webgazer.util = util;
-webgazer.params = params;
+const eyels = {};
+eyels.tracker = {};
+eyels.tracker.TFFaceMesh = TFFaceMesh;
+eyels.reg = Reg;
+eyels.reg.RidgeWeightedReg = ridgeRegWeighted.RidgeWeightedReg;
+eyels.reg.RidgeRegThreaded = ridgeRegThreaded.RidgeRegThreaded;
+eyels.util = util;
+eyels.params = params;
 
 var videoStream = null;
 var videoContainerElement = null;
@@ -37,27 +37,27 @@ var latestEyeFeatures = null;
 var latestGazeData = null;
 var paused = false;
 
-var nopCallback = function(data, time) {};
+var nopCallback = function (data, time) { };
 var callback = nopCallback;
 
 var eventTypes = ['click', 'move'];
 
 var moveClock = performance.now();
 
-var curTracker = new webgazer.tracker.TFFaceMesh();
-var regs = [new webgazer.reg.RidgeReg()];
+var curTracker = new eyels.tracker.TFFaceMesh();
+var regs = [new eyels.reg.RidgeReg()];
 
 var curTrackerMap = {
-  'TFFacemesh': function() { return new webgazer.tracker.TFFaceMesh(); },
+  'TFFacemesh': function () { return new eyels.tracker.TFFaceMesh(); },
 };
 var regressionMap = {
-  'ridge': function() { return new webgazer.reg.RidgeReg(); },
-  'weightedRidge': function() { return new webgazer.reg.RidgeWeightedReg(); },
-  'threadedRidge': function() { return new webgazer.reg.RidgeRegThreaded(); },
+  'ridge': function () { return new eyels.reg.RidgeReg(); },
+  'weightedRidge': function () { return new eyels.reg.RidgeWeightedReg(); },
+  'threadedRidge': function () { return new eyels.reg.RidgeRegThreaded(); },
 };
 
-var localstorageDataLabel = 'webgazerGlobalData';
-var localstorageSettingsLabel = 'webgazerGlobalSettings';
+var localstorageDataLabel = 'eyelsGlobalData';
+var localstorageSettingsLabel = 'eyelsGlobalSettings';
 
 var settings = {};
 var data = [];
@@ -66,22 +66,22 @@ var defaults = {
   'settings': {}
 };
 
-webgazer.computeValidationBoxSize = function() {
+eyels.computeValidationBoxSize = function () {
 
   var vw = videoElement.videoWidth;
   var vh = videoElement.videoHeight;
   var pw = parseInt(videoElement.style.width);
   var ph = parseInt(videoElement.style.height);
 
-  var smaller = Math.min( vw, vh );
-  var larger  = Math.max( vw, vh );
+  var smaller = Math.min(vw, vh);
+  var larger = Math.max(vw, vh);
 
-  var scalar = ( vw == larger ? pw / vw : ph / vh );
+  var scalar = (vw == larger ? pw / vw : ph / vh);
 
-  var boxSize = (smaller * webgazer.params.faceFeedbackBoxRatio) * scalar;
+  var boxSize = (smaller * eyels.params.faceFeedbackBoxRatio) * scalar;
 
-  var topVal = (ph - boxSize)/2;
-  var leftVal = (pw - boxSize)/2;
+  var topVal = (ph - boxSize) / 2;
+  var leftVal = (pw - boxSize) / 2;
 
   return [topVal, leftVal, boxSize, boxSize]
 }
@@ -92,11 +92,11 @@ function checkEyesInValidationBox() {
     var w = videoElement.videoWidth;
     var h = videoElement.videoHeight;
 
-    var smaller = Math.min( w, h );
-    var boxSize = smaller * webgazer.params.faceFeedbackBoxRatio;
+    var smaller = Math.min(w, h);
+    var boxSize = smaller * eyels.params.faceFeedbackBoxRatio;
 
-    var topBound = (h - boxSize)/2;
-    var leftBound = (w - boxSize)/2;
+    var topBound = (h - boxSize) / 2;
+    var leftBound = (w - boxSize) / 2;
     var rightBound = leftBound + boxSize;
     var bottomBound = topBound + boxSize;
 
@@ -120,7 +120,7 @@ function checkEyesInValidationBox() {
       }
     }
 
-    if (xPositions && yPositions){
+    if (xPositions && yPositions) {
       faceFeedbackBox.style.border = 'none';
     } else {
       faceFeedbackBox.style.border = 'none';
@@ -130,9 +130,9 @@ function checkEyesInValidationBox() {
     faceFeedbackBox.style.border = 'solid black';
 }
 
-function drawCoordinates(colour,x,y){
+function drawCoordinates(colour, x, y) {
   var ctx = document.getElementById("plotting_canvas").getContext('2d');
-  ctx.fillStyle = colour; 
+  ctx.fillStyle = colour;
   ctx.beginPath();
   ctx.arc(x, y, 5, 0, Math.PI * 2, true);
   ctx.fill();
@@ -144,7 +144,7 @@ function getPupilFeatures(canvas, width, height) {
   }
   try {
     return curTracker.getEyePatches(videoElement, canvas, width, height);
-  } catch(err) {
+  } catch (err) {
     console.log("can't get pupil features ", err);
     return null;
   }
@@ -176,16 +176,16 @@ async function getPrediction(regModelIndex) {
   }
   if (regModelIndex !== undefined) {
     return predictions[regModelIndex] === null ? null : {
-      'x' : predictions[regModelIndex].x,
-      'y' : predictions[regModelIndex].y,
+      'x': predictions[regModelIndex].x,
+      'y': predictions[regModelIndex].y,
       'eyeFeatures': latestEyeFeatures
     };
   } else {
     return predictions.length === 0 || predictions[0] === null ? null : {
-      'x' : predictions[0].x,
-      'y' : predictions[0].y,
+      'x': predictions[0].x,
+      'y': predictions[0].y,
       'eyeFeatures': latestEyeFeatures,
-      'all' : predictions
+      'all': predictions
     };
   }
 }
@@ -202,22 +202,21 @@ async function loop() {
 
     var elapsedTime = performance.now() - clockStart;
 
-    if( webgazer.params.showFaceOverlay )
-    {
+    if (eyels.params.showFaceOverlay) {
 
-      var tracker = webgazer.getTracker();
-      faceOverlay.getContext('2d').clearRect( 0, 0, videoElement.videoWidth, videoElement.videoHeight);
+      var tracker = eyels.getTracker();
+      faceOverlay.getContext('2d').clearRect(0, 0, videoElement.videoWidth, videoElement.videoHeight);
       tracker.drawFaceOverlay(faceOverlay.getContext('2d'), tracker.getPositions());
     }
 
-    if( webgazer.params.showFaceFeedbackBox )
+    if (eyels.params.showFaceFeedbackBox)
       checkEyesInValidationBox();
 
     latestGazeData = await latestGazeData;
 
     callback(latestGazeData, elapsedTime);
 
-    if( latestGazeData ) {
+    if (latestGazeData) {
 
       smoothingVals.push(latestGazeData);
       var x = 0;
@@ -228,19 +227,19 @@ async function loop() {
         y += smoothingVals.get(d).y;
       }
 
-      var pred = util.bound({'x':x/len, 'y':y/len});
+      var pred = util.bound({ 'x': x / len, 'y': y / len });
 
-      if (webgazer.params.storingPoints) {
-        drawCoordinates('blue',pred.x,pred.y); 
+      if (eyels.params.storingPoints) {
+        drawCoordinates('blue', pred.x, pred.y);
 
-        webgazer.storePoints(pred.x, pred.y, k);
+        eyels.storePoints(pred.x, pred.y, k);
         k++;
         if (k == 50) {
           k = 0;
         }
       }
 
-      if (webgazer.params.showGazeDot) {
+      if (eyels.params.showGazeDot) {
         gazeDot.style.display = 'block';
       }
       gazeDot.style.transform = 'translate3d(' + pred.x + 'px,' + pred.y + 'px,0)';
@@ -252,7 +251,7 @@ async function loop() {
   }
 }
 
-var recordScreenPosition = function(x, y, eventType) {
+var recordScreenPosition = function (x, y, eventType) {
   if (paused) {
     return;
   }
@@ -261,42 +260,42 @@ var recordScreenPosition = function(x, y, eventType) {
     return null;
   }
   for (var reg in regs) {
-    if( latestEyeFeatures )
+    if (latestEyeFeatures)
       regs[reg].addData(latestEyeFeatures, [x, y], eventType);
   }
 };
 
-var clickListener = async function(event) {
-  recordScreenPosition(event.clientX, event.clientY, eventTypes[0]); 
+var clickListener = async function (event) {
+  recordScreenPosition(event.clientX, event.clientY, eventTypes[0]);
 
-  if (webgazer.params.saveDataAcrossSessions) {
+  if (eyels.params.saveDataAcrossSessions) {
 
     await setGlobalData();
 
   }
 };
 
-var moveListener = function(event) {
+var moveListener = function (event) {
   if (paused) {
     return;
   }
 
   var now = performance.now();
-  if (now < moveClock + webgazer.params.moveTickSize) {
+  if (now < moveClock + eyels.params.moveTickSize) {
     return;
   } else {
     moveClock = now;
   }
-  recordScreenPosition(event.clientX, event.clientY, eventTypes[1]); 
+  recordScreenPosition(event.clientX, event.clientY, eventTypes[1]);
 };
 
-var addMouseEventListeners = function() {
+var addMouseEventListeners = function () {
 
   document.addEventListener('click', clickListener, true);
   document.addEventListener('mousemove', moveListener, true);
 };
 
-var removeMouseEventListeners = function() {
+var removeMouseEventListeners = function () {
 
   document.removeEventListener('click', clickListener, true);
   document.removeEventListener('mousemove', moveListener, true);
@@ -321,9 +320,9 @@ async function loadGlobalData() {
 
 async function setGlobalData() {
 
-  var storeData = regs[0].getData() || data; 
+  var storeData = regs[0].getData() || data;
 
-  localforage.setItem(localstorageSettingsLabel, settings) 
+  localforage.setItem(localstorageSettingsLabel, settings)
   localforage.setItem(localstorageDataLabel, storeData);
 
 }
@@ -345,36 +344,36 @@ async function init(stream) {
   videoStream = stream;
 
   videoContainerElement = document.createElement('div');
-  videoContainerElement.id = webgazer.params.videoContainerId;
+  videoContainerElement.id = eyels.params.videoContainerId;
 
   videoContainerElement.style.position = 'fixed';
   videoContainerElement.style.top = topDist;
   videoContainerElement.style.left = leftDist;
-  videoContainerElement.style.width = webgazer.params.videoViewerWidth + 'px';
-  videoContainerElement.style.height = webgazer.params.videoViewerHeight + 'px';
+  videoContainerElement.style.width = eyels.params.videoViewerWidth + 'px';
+  videoContainerElement.style.height = eyels.params.videoViewerHeight + 'px';
   hideVideoElement(videoContainerElement);
 
   videoElement = document.createElement('video');
   videoElement.setAttribute('playsinline', '');
-  videoElement.id = webgazer.params.videoElementId;
+  videoElement.id = eyels.params.videoElementId;
   videoElement.srcObject = stream;
   videoElement.autoplay = true;
   videoElement.style.position = 'absolute';
 
-  videoElement.style.width = webgazer.params.videoViewerWidth + 'px';
-  videoElement.style.height = webgazer.params.videoViewerHeight + 'px';
+  videoElement.style.width = eyels.params.videoViewerWidth + 'px';
+  videoElement.style.height = eyels.params.videoViewerHeight + 'px';
   hideVideoElement(videoElement);
 
   videoElementCanvas = document.createElement('canvas');
-  videoElementCanvas.id = webgazer.params.videoElementCanvasId;
+  videoElementCanvas.id = eyels.params.videoElementCanvasId;
   videoElementCanvas.style.display = 'none';
 
   faceOverlay = document.createElement('canvas');
-  faceOverlay.id = webgazer.params.faceOverlayId;
-  faceOverlay.style.display = webgazer.params.showFaceOverlay ? 'block' : 'none';
+  faceOverlay.id = eyels.params.faceOverlayId;
+  faceOverlay.style.display = eyels.params.showFaceOverlay ? 'block' : 'none';
   faceOverlay.style.position = 'absolute';
 
-  if (webgazer.params.mirrorVideo) {
+  if (eyels.params.mirrorVideo) {
     videoElement.style.setProperty("-moz-transform", "scale(-1, 1)");
     videoElement.style.setProperty("-webkit-transform", "scale(-1, 1)");
     videoElement.style.setProperty("-o-transform", "scale(-1, 1)");
@@ -388,18 +387,18 @@ async function init(stream) {
   }
 
   faceFeedbackBox = document.createElement('canvas');
-  faceFeedbackBox.id = webgazer.params.faceFeedbackBoxId;
-  faceFeedbackBox.style.display = webgazer.params.showFaceFeedbackBox ? 'block' : 'none';
+  faceFeedbackBox.id = eyels.params.faceFeedbackBoxId;
+  faceFeedbackBox.style.display = eyels.params.showFaceFeedbackBox ? 'block' : 'none';
   faceFeedbackBox.style.border = 'solid';
   faceFeedbackBox.style.position = 'absolute';
 
   gazeDot = document.createElement('div');
-  gazeDot.id = webgazer.params.gazeDotId;
-  gazeDot.style.display = webgazer.params.showGazeDot ? 'block' : 'none';
+  gazeDot.id = eyels.params.gazeDotId;
+  gazeDot.style.display = eyels.params.showGazeDot ? 'block' : 'none';
   gazeDot.style.position = 'fixed';
   gazeDot.style.zIndex = 99999;
   gazeDot.style.left = '-5px';
-  gazeDot.style.top  = '-5px';
+  gazeDot.style.top = '-5px';
   gazeDot.style.background = 'red';
   gazeDot.style.borderRadius = '100%';
   gazeDot.style.opacity = '0.7';
@@ -411,8 +410,8 @@ async function init(stream) {
   const videoPreviewSetup = new Promise((res) => {
     function setupPreviewVideo(e) {
 
-      setInternalVideoBufferSizes( videoElement.videoWidth, videoElement.videoHeight );
-      webgazer.setVideoViewerSize( webgazer.params.videoViewerWidth, webgazer.params.videoViewerHeight );
+      setInternalVideoBufferSizes(videoElement.videoWidth, videoElement.videoHeight);
+      eyels.setVideoViewerSize(eyels.params.videoViewerWidth, eyels.params.videoViewerHeight);
 
       videoContainerElement.appendChild(videoElementCanvas);
       videoContainerElement.appendChild(faceOverlay);
@@ -434,14 +433,14 @@ async function init(stream) {
   await loop();
 }
 
-function setUserMediaVariable(){
+function setUserMediaVariable() {
 
   if (navigator.mediaDevices === undefined) {
     navigator.mediaDevices = {};
   }
 
   if (navigator.mediaDevices.getUserMedia === undefined) {
-    navigator.mediaDevices.getUserMedia = function(constraints) {
+    navigator.mediaDevices.getUserMedia = function (constraints) {
 
       var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
@@ -449,24 +448,24 @@ function setUserMediaVariable(){
         return Promise.reject(new Error("Unfortunately, your browser does not support access to the webcam through the getUserMedia API. Try to use the latest version of Google Chrome, Mozilla Firefox, Opera, or Microsoft Edge instead."));
       }
 
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         getUserMedia.call(navigator, constraints, resolve, reject);
       });
     }
   }
 }
 
-webgazer.begin = function(onFail) {
+eyels.begin = function (onFail) {
 
-  if (webgazer.params.saveDataAcrossSessions) {
+  if (eyels.params.saveDataAcrossSessions) {
     loadGlobalData();
   }
 
-  onFail = onFail || function() {console.log('No stream')};
+  onFail = onFail || function () { console.log('No stream') };
 
   if (debugVideoLoc) {
     init(debugVideoLoc);
-    return webgazer;
+    return eyels;
   }
 
   setUserMediaVariable();
@@ -474,10 +473,10 @@ webgazer.begin = function(onFail) {
   return new Promise(async (resolve, reject) => {
     let stream;
     try {
-      stream = await navigator.mediaDevices.getUserMedia( webgazer.params.camConstraints );
+      stream = await navigator.mediaDevices.getUserMedia(eyels.params.camConstraints);
       await init(stream);
-      resolve(webgazer);
-    } catch(err) {
+      resolve(eyels);
+    } catch (err) {
       onFail();
       videoElement = null;
       stream = null;
@@ -486,49 +485,49 @@ webgazer.begin = function(onFail) {
   });
 };
 
-webgazer.isReady = function() {
+eyels.isReady = function () {
   if (videoElementCanvas === null) {
     return false;
   }
   return videoElementCanvas.width > 0;
 };
 
-webgazer.pause = function() {
+eyels.pause = function () {
   paused = true;
-  return webgazer;
+  return eyels;
 };
 
-webgazer.resume = async function() {
+eyels.resume = async function () {
   if (!paused) {
-    return webgazer;
+    return eyels;
   }
   paused = false;
   await loop();
-  return webgazer;
+  return eyels;
 };
 
-webgazer.end = function() {
+eyels.end = function () {
 
   paused = true;
 
   videoContainerElement.remove();
   gazeDot.remove();
 
-  return webgazer;
+  return eyels;
 };
 
-webgazer.stopVideo = function() {
+eyels.stopVideo = function () {
 
   videoStream.getTracks()[0].stop();
 
-  videoContainerElement.removeChild( faceOverlay );
+  videoContainerElement.removeChild(faceOverlay);
 
-  videoContainerElement.removeChild( faceFeedbackBox );
+  videoContainerElement.removeChild(faceFeedbackBox);
 
-  return webgazer;
+  return eyels;
 }
 
-webgazer.detectCompatibility = function() {
+eyels.detectCompatibility = function () {
 
   var getUserMedia = navigator.mediaDevices.getUserMedia ||
     navigator.getUserMedia ||
@@ -538,116 +537,113 @@ webgazer.detectCompatibility = function() {
   return getUserMedia !== undefined;
 };
 
-webgazer.showVideoPreview = function(val) {
-  webgazer.params.showVideoPreview = val;
-  webgazer.showVideo(val && webgazer.params.showVideo);
-  webgazer.showFaceOverlay(val && webgazer.params.showFaceOverlay);
-  webgazer.showFaceFeedbackBox(val && webgazer.params.showFaceFeedbackBox);
-  return webgazer;
+eyels.showVideoPreview = function (val) {
+  eyels.params.showVideoPreview = val;
+  eyels.showVideo(val && eyels.params.showVideo);
+  eyels.showFaceOverlay(val && eyels.params.showFaceOverlay);
+  eyels.showFaceFeedbackBox(val && eyels.params.showFaceFeedbackBox);
+  return eyels;
 }
 
 function hideVideoElement(val) {
   if (navigator.vendor && navigator.vendor.indexOf('Apple') > -1) {
-    val.style.opacity = webgazer.params.showVideo ? '1': '0';
+    val.style.opacity = eyels.params.showVideo ? '1' : '0';
     val.style.display = 'block';
   } else {
-    val.style.display = webgazer.params.showVideo ? 'block' : 'none';
+    val.style.display = eyels.params.showVideo ? 'block' : 'none';
   }
 }
 
-webgazer.showVideo = function(val) {
-  webgazer.params.showVideo = val;
+eyels.showVideo = function (val) {
+  eyels.params.showVideo = val;
   if (videoElement) {
     hideVideoElement(videoElement);
   }
   if (videoContainerElement) {
     hideVideoElement(videoContainerElement);
   }
-  return webgazer;
+  return eyels;
 };
 
-webgazer.showFaceOverlay = function(val) {
-  webgazer.params.showFaceOverlay = val;
-  if( faceOverlay ) {
+eyels.showFaceOverlay = function (val) {
+  eyels.params.showFaceOverlay = val;
+  if (faceOverlay) {
     faceOverlay.style.display = val ? 'block' : 'none';
   }
-  return webgazer;
+  return eyels;
 };
 
-webgazer.showFaceFeedbackBox = function(val) {
+eyels.showFaceFeedbackBox = function (val) {
 
-  webgazer.params.showFaceFeedbackBox = val;
-  if( faceFeedbackBox ) {
+  eyels.params.showFaceFeedbackBox = val;
+  if (faceFeedbackBox) {
     faceFeedbackBox.style.display = val ? 'block' : 'none';
   }
-  return webgazer;
+  return eyels;
 };
 
-webgazer.showPredictionPoints = function(val) {
-  webgazer.params.showGazeDot = val;
-  if( gazeDot ) {
+eyels.showPredictionPoints = function (val) {
+  eyels.params.showGazeDot = val;
+  if (gazeDot) {
     gazeDot.style.display = val ? 'block' : 'none';
   }
-  return webgazer;
+  return eyels;
 };
 
-webgazer.saveDataAcrossSessions = function(val) {
-  webgazer.params.saveDataAcrossSessions = val;
-  return webgazer;
+eyels.saveDataAcrossSessions = function (val) {
+  eyels.params.saveDataAcrossSessions = val;
+  return eyels;
 }
 
-webgazer.applyKalmanFilter = function(val) {
-  webgazer.params.applyKalmanFilter = val;
-  return webgazer;
+eyels.applyKalmanFilter = function (val) {
+  eyels.params.applyKalmanFilter = val;
+  return eyels;
 }
 
-webgazer.setCameraConstraints = async function(constraints) {
-  var videoTrack,videoSettings;
-  webgazer.params.camConstraints = constraints;
+eyels.setCameraConstraints = async function (constraints) {
+  var videoTrack, videoSettings;
+  eyels.params.camConstraints = constraints;
 
-  if(videoStream)
-  {
-    webgazer.pause();
+  if (videoStream) {
+    eyels.pause();
     videoTrack = videoStream.getVideoTracks()[0];
     try {
-      await videoTrack.applyConstraints( webgazer.params.camConstraints );
+      await videoTrack.applyConstraints(eyels.params.camConstraints);
       videoSettings = videoTrack.getSettings();
-      setInternalVideoBufferSizes( videoSettings.width, videoSettings.height );
-    } catch(err) {
-      console.log( err );
+      setInternalVideoBufferSizes(videoSettings.width, videoSettings.height);
+    } catch (err) {
+      console.log(err);
       return;
     }
 
-    webgazer.setVideoViewerSize( webgazer.params.videoViewerWidth, webgazer.params.videoViewerHeight )
-    webgazer.getTracker().reset();
-    await webgazer.resume();
+    eyels.setVideoViewerSize(eyels.params.videoViewerWidth, eyels.params.videoViewerHeight)
+    eyels.getTracker().reset();
+    await eyels.resume();
   }
 }
 
-function setInternalVideoBufferSizes( width, height ) {
+function setInternalVideoBufferSizes(width, height) {
 
-  if( videoElementCanvas )
-  {
+  if (videoElementCanvas) {
     videoElementCanvas.width = width;
     videoElementCanvas.height = height;
   }
 
-  if( faceOverlay )
-  {
+  if (faceOverlay) {
     faceOverlay.width = width;
     faceOverlay.height = height;
   }
 }
 
-webgazer.setStaticVideo = function(videoLoc) {
+eyels.setStaticVideo = function (videoLoc) {
   debugVideoLoc = videoLoc;
-  return webgazer;
+  return eyels;
 };
 
-webgazer.setVideoViewerSize = function(w, h) {
+eyels.setVideoViewerSize = function (w, h) {
 
-  webgazer.params.videoViewerWidth = w;
-  webgazer.params.videoViewerHeight = h;
+  eyels.params.videoViewerWidth = w;
+  eyels.params.videoViewerHeight = h;
 
   videoElement.style.width = w + 'px';
   videoElement.style.height = h + 'px';
@@ -658,7 +654,7 @@ webgazer.setVideoViewerSize = function(w, h) {
   faceOverlay.style.width = w + 'px';
   faceOverlay.style.height = h + 'px';
 
-  var tlwh = webgazer.computeValidationBoxSize()
+  var tlwh = eyels.computeValidationBoxSize()
 
   faceFeedbackBox.style.top = tlwh[0] + 'px';
   faceFeedbackBox.style.left = tlwh[1] + 'px';
@@ -666,120 +662,120 @@ webgazer.setVideoViewerSize = function(w, h) {
   faceFeedbackBox.style.height = tlwh[3] + 'px';
 };
 
-webgazer.addMouseEventListeners = function() {
+eyels.addMouseEventListeners = function () {
   addMouseEventListeners();
-  return webgazer;
+  return eyels;
 };
 
-webgazer.removeMouseEventListeners = function() {
+eyels.removeMouseEventListeners = function () {
   removeMouseEventListeners();
-  return webgazer;
+  return eyels;
 };
 
-webgazer.recordScreenPosition = function(x, y, eventType) {
+eyels.recordScreenPosition = function (x, y, eventType) {
 
   recordScreenPosition(x, y, eventType || eventTypes[0]);
-  return webgazer;
+  return eyels;
 };
 
-webgazer.storePoints = function(x, y, k) {
+eyels.storePoints = function (x, y, k) {
   xPast50[k] = x;
   yPast50[k] = y;
 }
 
-webgazer.setTracker = function(name) {
+eyels.setTracker = function (name) {
   if (curTrackerMap[name] === undefined) {
     console.log('Invalid tracker selection');
     console.log('Options are: ');
     for (var t in curTrackerMap) {
       console.log(t);
     }
-    return webgazer;
+    return eyels;
   }
   curTracker = curTrackerMap[name]();
-  return webgazer;
+  return eyels;
 };
 
-webgazer.setRegression = function(name) {
+eyels.setRegression = function (name) {
   if (regressionMap[name] === undefined) {
     console.log('Invalid regression selection');
     console.log('Options are: ');
     for (var reg in regressionMap) {
       console.log(reg);
     }
-    return webgazer;
+    return eyels;
   }
   data = regs[0].getData();
   regs = [regressionMap[name]()];
   regs[0].setData(data);
-  return webgazer;
+  return eyels;
 };
 
-webgazer.addTrackerModule = function(name, constructor) {
-  curTrackerMap[name] = function() {
+eyels.addTrackerModule = function (name, constructor) {
+  curTrackerMap[name] = function () {
     return new constructor();
   };
 };
 
-webgazer.addRegressionModule = function(name, constructor) {
-  regressionMap[name] = function() {
+eyels.addRegressionModule = function (name, constructor) {
+  regressionMap[name] = function () {
     return new constructor();
   };
 };
 
-webgazer.addRegression = function(name) {
+eyels.addRegression = function (name) {
   var newReg = regressionMap[name]();
   data = regs[0].getData();
   newReg.setData(data);
   regs.push(newReg);
-  return webgazer;
+  return eyels;
 };
 
-webgazer.setGazeListener = function(listener) {
+eyels.setGazeListener = function (listener) {
   callback = listener;
-  return webgazer;
+  return eyels;
 };
 
-webgazer.clearGazeListener = function() {
+eyels.clearGazeListener = function () {
   callback = nopCallback;
-  return webgazer;
+  return eyels;
 };
 
-webgazer.setVideoElementCanvas = function(canvas) {
+eyels.setVideoElementCanvas = function (canvas) {
   videoElementCanvas = canvas;
   return videoElementCanvas;
 }
 
-webgazer.clearData = async function() {
+eyels.clearData = async function () {
   clearData();
 }
 
-webgazer.getTracker = function() {
+eyels.getTracker = function () {
   return curTracker;
 };
 
-webgazer.getRegression = function() {
+eyels.getRegression = function () {
   return regs;
 };
 
-webgazer.getCurrentPrediction = function(regIndex) {
+eyels.getCurrentPrediction = function (regIndex) {
   return getPrediction(regIndex);
 };
 
-webgazer.params.getEventTypes = function() {
+eyels.params.getEventTypes = function () {
   return eventTypes.slice();
 }
 
-webgazer.getVideoElementCanvas = function() {
+eyels.getVideoElementCanvas = function () {
   return videoElementCanvas;
 }
 
-webgazer.getVideoPreviewToCameraResolutionRatio = function() {
-  return [webgazer.params.videoViewerWidth / videoElement.videoWidth, webgazer.params.videoViewerHeight / videoElement.videoHeight];
+eyels.getVideoPreviewToCameraResolutionRatio = function () {
+  return [eyels.params.videoViewerWidth / videoElement.videoWidth, eyels.params.videoViewerHeight / videoElement.videoHeight];
 }
 
-webgazer.getStoredPoints = function() {
+eyels.getStoredPoints = function () {
   return [xPast50, yPast50];
 }
 
-export default webgazer;
+export default eyels;

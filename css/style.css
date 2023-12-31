@@ -1,5 +1,5 @@
 body {
-    min-width:600px!important;
+    min-width: 600px !important;
 }
 
 button {
@@ -7,7 +7,7 @@ button {
 }
 
 #videoContainer {
-    display: block !important; 
+    display: block !important;
     position: fixed !important;
     top: 0px !important;
     left: 0px !important;
@@ -16,12 +16,12 @@ button {
     z-index: 1;
 }
 
-#webgazerNavbar {
+#eyelsNavbar {
     left: 320px;
     width: calc(100% - 320px);
     z-index: 0;
     box-shadow: 0px 3px 5px #ddd;
-    border:0px;
+    border: 0px;
     background-color: #fff;
 }
 
@@ -42,59 +42,66 @@ li {
 }
 
 .helpBtn:hover {
-    color: black!important;
+    color: black !important;
     text-decoration: none;
 }
 
 .modal-header {
-    border-bottom: none!important;
+    border-bottom: none !important;
 }
 
-.Calibration{
+.Calibration {
     width: 25px;
     height: 25px;
     background-color: red;
     opacity: 0.2;
     border-color: black;
     border-style: solid;
-    position:fixed;
+    position: fixed;
 }
 
-#Pt1{
+#Pt1 {
     top: 70px;
     left: 5vw;
 }
 
-#Pt2{
+#Pt2 {
     top: 70px;
-    left:50vw;
+    left: 50vw;
     margin-left: 340;
 }
-#Pt3{
+
+#Pt3 {
     top: 70px;
-    right:5vw;
+    right: 5vw;
 }
-#Pt4{
-    top:50vh;
-    left:5vw;
+
+#Pt4 {
+    top: 50vh;
+    left: 5vw;
 }
-#Pt5{
+
+#Pt5 {
     top: 50vh;
     left: 50vw;
 }
-#Pt6{
+
+#Pt6 {
     top: 50vh;
-    right:5vw;
+    right: 5vw;
 }
-#Pt7{
-    bottom:5vw;
+
+#Pt7 {
+    bottom: 5vw;
     left: 5vw;
 }
-#Pt8{
-    bottom:5vw;
-    left:50vw;
+
+#Pt8 {
+    bottom: 5vw;
+    left: 50vw;
 }
-#Pt9{
-    bottom:5vw;
-    right:5vw;
+
+#Pt9 {
+    bottom: 5vw;
+    right: 5vw;
 }

@@ -1,7 +1,7 @@
-function store_points_variable(){
-  webgazer.params.storingPoints = true;
+function store_points_variable() {
+  eyels.params.storingPoints = true;
 }
 
-function stop_storing_points_variable(){
-  webgazer.params.storingPoints = false;
+function stop_storing_points_variable() {
+  eyels.params.storingPoints = false;
 }

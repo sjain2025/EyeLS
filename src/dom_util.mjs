@@ -1,15 +1,15 @@
-window.requestAnimFrame = (function() {
+window.requestAnimFrame = (function () {
   return window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
     window.oRequestAnimationFrame ||
     window.msRequestAnimationFrame ||
-    function( callback,  element) {
-      return window.setTimeout(callback, 1000/60);
+    function (callback, element) {
+      return window.setTimeout(callback, 1000 / 60);
     };
 })();
 
-window.cancelRequestAnimFrame = (function() {
+window.cancelRequestAnimFrame = (function () {
   return window.cancelCancelRequestAnimationFrame ||
     window.webkitCancelRequestAnimationFrame ||
     window.mozCancelRequestAnimationFrame ||
