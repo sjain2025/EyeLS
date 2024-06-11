@@ -1,0 +1,26 @@
+const params = {
+  moveTickSize: 50,
+  videoContainerId: 'videoContainer',
+  videoElementId: 'eyelsVideoFeed',
+  videoElementCanvasId: 'eyelsVideoCanvas',
+  faceOverlayId: 'eyelsFaceOverlay',
+  faceFeedbackBoxId: 'eyelsFaceFeedbackBox',
+  gazeDotId: 'eyelsGazeDot',
+  videoViewerWidth: 320,
+  videoViewerHeight: 240,
+  faceFeedbackBoxRatio: 0.66,
+  showVideo: true,
+  mirrorVideo: true,
+  showFaceOverlay: true,
+  showFaceFeedbackBox: true,
+  showGazeDot: true,
+  camConstraints: { video: { width: { min: 320, ideal: 640, max: 1920 }, height: { min: 240, ideal: 480, max: 1080 }, facingMode: "user" } },
+  dataTimestep: 50,
+  showVideoPreview: true,
+  applyKalmanFilter: true,
+  saveDataAcrossSessions: true,
+  storingPoints: false,
+  trackEye: 'both',
+};
+
+export default params;
